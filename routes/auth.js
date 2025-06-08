@@ -8,6 +8,12 @@ const { findUserByEmail, findUserByUsername } = require('../models/userModel');
 const rateLimit = require('express-rate-limit');
 const db = require('../models/db');
 const nodemailer = require('nodemailer');
+const { promisify } = require('util');
+const dbRun = promisify(db.run.bind(db));
+
+async function logAction(userId, action) {
+    await dbRun('INSERT INTO logs (user_id, action) VALUES (?, ?)', [userId, action]);
+}
 
 //Ограничитель количества попыток для входа
 const loginLimiter = rateLimit({
@@ -16,9 +22,17 @@ const loginLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     validate: {trustProxy: true},
+    keyGenerator: (req) => {
+        const username = req.body.username || 'unknown';
+        return `${req.ip}:${username.toLowerCase()}`;
+    },
     handler: (req, res) => {
         const ip = req.ip;
         const time = new Date().toISOString();
+        const username = req.body.username || 'unknown';
+
+        logAction('null', `[LOGIN RATE LIMIT] IP ${req.ip} для пользователя "${username}" превысил лимит. ${new Date().toISOString()}`);
+
         console.warn(`[LOGIN RATE LIMIT] ${ip} превысил лимит входа — ${time}`);
 
         const token = req.csrfToken();

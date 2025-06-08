@@ -27,7 +27,7 @@ app.use(session({
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     httpOnly: true,
-    secure: false, //Поставить true после получения secure в "https://"
+    secure: true, //Поставить true после получения secure в "https://"
     sameSite: 'strict',
   }
 }));
@@ -65,7 +65,7 @@ app.use((err, req, res, next) => {
   }
 });
 
-
+app.set('trust proxy', true);
 app.set('view engine', 'ejs');
 app.use('/', authRoutes);
 app.use('/', indexRoutes);
