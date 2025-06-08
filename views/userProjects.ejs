@@ -54,6 +54,9 @@
         const container = document.getElementById('projectsContainer');
         const viewMode = document.getElementById('viewMode').value;
         const isOwner = <%= isOwner ? 'true' : 'false' %>;
+        const emailVerified = <%= emailVerified ? '1' : '0' %>;
+        const userId = <%= userId %>;
+
         container.className = viewMode === 'list'
             ? 'flex flex-col space-y-4 mt-6'
             : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6';
@@ -61,14 +64,21 @@
         container.innerHTML = '';
 
         if (!projects || projects.length === 0) {
-            if (isOwner) {
+            if (isOwner && emailVerified) {
                 container.innerHTML = `
                 <div class="col-span-full text-center text-gray-500 text-lg mt-10">
                     У вас пока нет проектов. Нажмите <a href="/projects/add" class="text-blue-600 underline">сюда</a>, чтобы создать первый.
                 </div>
             `;
                 return;
-            } else {
+            } if (isOwner && !emailVerified) {
+                container.innerHTML = `
+                <div class="col-span-full text-center text-gray-500 text-lg mt-10">
+                    У вас пока нет проектов. Подтвердите <a href="/profile/${userId}/edit" class="text-blue-600 underline">почту</a>, чтобы иметь возможность создавать проекты.
+                </div>
+            `;
+            }
+            else {
                 container.innerHTML = `
                 <div class="col-span-full text-center text-gray-500 text-lg mt-10">
                     У этого пользователя пока нет проектов.

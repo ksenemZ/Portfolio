@@ -20,6 +20,8 @@ router.get('/profile/:id/projects', ensureAuth, (req, res) => {
     const profileId = parseInt(req.params.id);
     const viewer = req.session.user.id || null;
     const isOwner = viewer && parseInt(viewer) === profileId;
+    const emailVerified = req.session.user.emailVerified;
+    const userId = parseInt(req.params.id);
 
     db.all(`SELECT * FROM projects WHERE user_id = ? ORDER BY ${orderBy}`, [profileId], (err, projects) => {
         if (err) return res.status(500).render('errors/500', { title: '500 - Ошибка сервера' });
@@ -30,6 +32,8 @@ router.get('/profile/:id/projects', ensureAuth, (req, res) => {
             projects,
             sort,
             isOwner,
+            emailVerified,
+            userId,
             profileId
         });
     });
@@ -37,7 +41,7 @@ router.get('/profile/:id/projects', ensureAuth, (req, res) => {
 
 //Получаем проекты с фильтрацией
 router.get('/api/user-projects', (req, res) => {
-    const userId = parseInt(req.query.user_id); // <-- получаем нужного пользователя
+    const userId = parseInt(req.query.user_id);
     const sort = req.query.sort || 'favorite';
 
     let orderBy = 'created_at DESC';

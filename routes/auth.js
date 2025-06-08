@@ -84,6 +84,7 @@ router.post('/login', loginLimiter, async (req, res) => {
         github: user.github,
         telegram: user.telegram,
         linkedin: user.linkedin,
+        emailVerified: user.email_verified,
         role: user.role };
     res.redirect('/');
 });
