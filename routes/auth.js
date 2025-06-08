@@ -15,6 +15,7 @@ const loginLimiter = rateLimit({
     max: 5,
     standardHeaders: true,
     legacyHeaders: false,
+    validate: {trustProxy: true},
     handler: (req, res) => {
         const ip = req.ip;
         const time = new Date().toISOString();
