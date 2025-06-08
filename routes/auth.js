@@ -37,26 +37,26 @@ router.get('/login', (req, res) => {
 router.post('/login', loginLimiter, async (req, res) => {
     const { identifier, password } = req.body;
 
-    const secretKey = '6Lev1lYrAAAAABFQ5rH_aAImyzP99aaaN2E6CNW3';
-    try {
-        const captchaVerify = await axios.post(
-            `https://www.google.com/recaptcha/api/siteverify`,
-            null,
-            {
-                params: {
-                    secret: secretKey,
-                    response: token
-                }
-            }
-        );
-
-        if (!captchaVerify.data.success) {
-            return res.render('login', { error: 'Подтвердите, что вы не робот' });
-        }
-    } catch (err) {
-        console.error('Ошибка проверки reCAPTCHA:', err);
-        return res.render('login', { error: 'Ошибка проверки reCAPTCHA' });
-    }
+    //const secretKey = '6Lev1lYrAAAAABFQ5rH_aAImyzP99aaaN2E6CNW3';
+    //try {
+    //    const captchaVerify = await axios.post(
+    //        `https://www.google.com/recaptcha/api/siteverify`,
+    //        null,
+    //        {
+    //            params: {
+    //                secret: secretKey,
+    //                response: token
+    //            }
+    //        }
+    //    );
+    //
+    //    if (!captchaVerify.data.success) {
+    //        return res.render('login', { error: 'Подтвердите, что вы не робот' });
+    //    }
+    //} catch (err) {
+    //    console.error('Ошибка проверки reCAPTCHA:', err);
+    //    return res.render('login', { error: 'Ошибка проверки reCAPTCHA' });
+    //}
 
     let user;
 

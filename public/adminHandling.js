@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (response.ok) {
             chatInput.value = '';
-            await fetchMessages(); // Обновить чат сразу
+            await fetchMessages();
         }
     });
 
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setInterval(fetchMessages, 2000);
-    fetchMessages(); // Загрузка при старте
+    fetchMessages();
 });
 
 const chatContainer = document.getElementById("chat-container");

@@ -213,7 +213,7 @@
                     <% }) %>
                 </div>
 
-                <form id="chat-form" method="POST" class="mt-4 flex gap-3">
+                <form id="chat-form" action="/admin/chat/send" method="POST" class="mt-4 flex gap-3">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <input name="text" id="chat-input" required class="border rounded px-3 py-2 flex-1" placeholder="Введите сообщение..." autocomplete="off">
                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-600">📤</button>
