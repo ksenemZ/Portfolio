@@ -20,14 +20,14 @@
     <link rel="icon" href="/uploads/LOGO.png" type="image/x-icon">
 </head>
 
-<script>
+<!-- <script>
     if (window.innerWidth < 1145) {
         window.location.href = "/unsupported-screen";
     }
-</script>
+</script> -->
 <body class="flex h-screen overflow-hidden bg-gray-100">
 <!-- Левая панель -->
-<aside class="w-1/5 bg-white border-r p-4 space-y-2 flex flex-col items-start overflow-auto">
+<aside class="fixed top-0 left-0 h-full w-1/2 max-w-sm bg-white z-40 transform -translate-x-full transition-transform duration-300 md:static md:translate-x-0 md:w-1/5 md:max-w-none border-r p-4 overflow-auto" id="leftPanel">
     <div class="flex flex-col justify-between space-x-5 border-b w-full">
         <h2 class="font-bold mb-2">Добавить элемент</h2>
         <button onclick="addElement('text')" class="btn w-full text-left hover:bg-gray-100 p-2 rounded">Текст</button>
@@ -56,11 +56,11 @@
     <div class="font-bold mb-2 mt-10">Древо объектов</div>
     <ul id="objectTree" class="border-y overflow-auto px-2 py-1 text-sm space-y-1 w-full max-h-[300px]"></ul>
 
-    <button class="bg-green-500 text-white px-4 py-2 rounded flex w-max mt-2 hover:bg-green-600" onclick="saveCanvas()">Сохранить</button>
+    <button class=" bg-green-500 text-white px-4 py-2 rounded flex w-full mt-2 hover:bg-green-600" onclick="saveCanvas()">Сохранить</button>
 
-    <button class="bg-red-500 text-white px-4 py-2 rounded flex w-max mt-2 hover:bg-red-600" onclick="exportCanvasToPDF()">Экспортировать в PDF</button>
+    <button class="bg-red-500 text-white px-4 py-2 rounded flex w-full mt-2 hover:bg-red-600" onclick="exportCanvasToPDF()">PDF</button>
 
-<button class="bg-blue-500 text-white px-4 py-2 rounded flex w-max mt-2 hover:bg-blue-600"><a href="/profile/<%= user.id %>">Вернуться в профиль</a></button>
+<button class="bg-blue-500 text-white px-4 py-2 rounded flex w-full mt-2 mb-10 hover:bg-blue-600"><a href="/profile/<%= user.id %>">Вернуться</a></button>
 </aside>
 
 <!-- Холст -->
@@ -69,11 +69,21 @@
 </main>
 
 <!-- Правая панель -->
-<aside class="overflow-x-scroll w-1/5 bg-white border-l p-4" id="propertiesPanel">
+<aside class="fixed top-0 right-0 h-full w-1/2 max-w-sm bg-white z-40 transform translate-x-full transition-transform duration-300 md:static md:translate-x-0 md:w-1/5 md:max-w-none border-l p-4 overflow-auto" id="propertiesPanel">
     <h2 class="font-bold mb-2">Свойства</h2>
     <div id="propertiesContent">Выберите элемент</div>
 </aside>
 
+<!-- Панель кнопок управления (только на маленьких экранах) -->
+<div class="md:hidden fixed bottom-1 w-full justify-center z-50 flex gap-4">
+    <button onclick="togglePanel('left')" class="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-md">
+        Меню
+    </button>
+    <button onclick="togglePanel('right')" class="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-md">
+        Свойства
+    </button>
+</div>
+<script src="/editorSwitchButtons.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 <script src="/pdfExport.js"></script>

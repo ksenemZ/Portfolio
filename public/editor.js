@@ -3,6 +3,8 @@
 
 let selectedElement = null;
 let draggedElement = null;
+let dragTimer = null;
+let isDragging = false;
 let offsetX = 0;
 let offsetY = 0;
 
@@ -145,7 +147,7 @@ function selectElement(el) {
             </div>
     
             <label class="block text-sm mb-1 mt-3">Шрифт</label>
-            <select onchange="selectedElement.style.fontFamily = this.value">
+            <select class="w-full" onchange="selectedElement.style.fontFamily = this.value">
                 <option value="Arial">Arial</option>
                 <option value="Verdana">Verdana</option>
                 <option value="Georgia">Georgia</option>
@@ -470,48 +472,94 @@ function updateElementPosition() {
     document.getElementById('posY').value = inputY.toFixed(1);
 }
 
-//Drag & drop элемента
+//Сделать Drag & drop элемента
 function makeDraggable(el) {
-    el.addEventListener('mousedown', (e) => {
-        draggedElement = el;
-        offsetX = e.clientX - el.getBoundingClientRect().left;
-        offsetY = e.clientY - el.getBoundingClientRect().top;
-        document.addEventListener('mousemove', onDrag);
-        document.addEventListener('mouseup', stopDrag);
-    });
+    el.addEventListener('mousedown', (e) => startInteraction(e, el, false));
+    el.addEventListener('touchstart', (e) => startInteraction(e, el, true), { passive: false });
 }
-function onDrag(e) {
+
+//Просчет времени для корректного срабатывания клика и перетаскивания
+function startInteraction(e, el, isTouch) {
+    if (isTouch) e.preventDefault();
+    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+
+    offsetX = clientX - el.getBoundingClientRect().left;
+    offsetY = clientY - el.getBoundingClientRect().top;
+
+    dragTimer = setTimeout(() => {
+        isDragging = true;
+        draggedElement = el;
+
+        if (isTouch) {
+            document.addEventListener('touchmove', onDragTouch, { passive: false });
+            document.addEventListener('touchend', endInteractionTouch);
+        } else {
+            document.addEventListener('mousemove', onDragMouse);
+            document.addEventListener('mouseup', endInteractionMouse);
+        }
+    }, 250);
+
+    if (isTouch) {
+        document.addEventListener('touchend', (e) => handleTap(e, el), { once: true });
+    } else {
+        document.addEventListener('mouseup', (e) => handleTap(e, el), { once: true });
+    }
+}
+
+//Если не перетаскиваем, то инициируем "псевдоклик"
+function handleTap(e, el) {
+    if (!isDragging) {
+        clearTimeout(dragTimer);
+        selectElement(el);
+    }
+}
+
+//Калькуляция перемещения
+function dragElementTo(clientX, clientY) {
     if (!draggedElement) return;
 
     const canvas = document.getElementById('canvas');
     const canvasRect = canvas.getBoundingClientRect();
 
-    let left = e.clientX - canvasRect.left - offsetX;
-    let top = e.clientY - canvasRect.top - offsetY;
+    let left = clientX - canvasRect.left - offsetX;
+    let top = clientY - canvasRect.top - offsetY;
 
-    left = Math.max(0, left);
-    top = Math.max(0, top);
-
-    const canvasWidth = canvas.offsetWidth;
-    const canvasHeight = canvas.offsetHeight;
-    const elementWidth = draggedElement.offsetWidth;
-    const elementHeight = draggedElement.offsetHeight;
-
-    if (left + elementWidth > canvasWidth) {
-        left = canvasWidth - elementWidth;
-    }
-
-    if (top + elementHeight > canvasHeight) {
-        top = canvasHeight - elementHeight;
-    }
+    left = Math.max(0, Math.min(left, canvas.offsetWidth - draggedElement.offsetWidth));
+    top = Math.max(0, Math.min(top, canvas.offsetHeight - draggedElement.offsetHeight));
 
     draggedElement.style.left = `${left}px`;
     draggedElement.style.top = `${top}px`;
 }
-function stopDrag() {
-    document.removeEventListener('mousemove', onDrag);
-    document.removeEventListener('mouseup', stopDrag);
+
+//Обработчики для мыши и пальца
+function onDragMouse(e) {
+    dragElementTo(e.clientX, e.clientY);
+}
+function onDragTouch(e) {
+    e.preventDefault();
+    dragElementTo(e.touches[0].clientX, e.touches[0].clientY);
+}
+function endInteractionMouse() {
+    if (isDragging) {
+        document.removeEventListener('mousemove', onDragMouse);
+        document.removeEventListener('mouseup', endInteractionMouse);
+    }
+    cleanup();
+}
+function endInteractionTouch() {
+    if (isDragging) {
+        document.removeEventListener('touchmove', onDragTouch);
+        document.removeEventListener('touchend', endInteractionTouch);
+    }
+    cleanup();
+}
+
+//Сброс перетаскивания
+function cleanup() {
+    clearTimeout(dragTimer);
     draggedElement = null;
+    isDragging = false;
 }
 
 //Удаление элемента через панель
