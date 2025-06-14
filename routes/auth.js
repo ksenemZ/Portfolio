@@ -10,6 +10,7 @@ const db = require('../models/db');
 const nodemailer = require('nodemailer');
 const { promisify } = require('util');
 const dbRun = promisify(db.run.bind(db));
+const axios = require('axios');
 
 async function logAction(userId, action) {
     await dbRun('INSERT INTO logs (user_id, action) VALUES (?, ?)', [userId, action]);
@@ -50,28 +51,34 @@ router.get('/login', (req, res) => {
     res.render('login', { error: null, csrfToken: token });
 });
 router.post('/login', loginLimiter, async (req, res) => {
-    const { identifier, password } = req.body;
+    const { identifier, password, 'g-recaptcha-response': recaptchaResponse } = req.body;
 
-    //const secretKey = '6Lev1lYrAAAAABFQ5rH_aAImyzP99aaaN2E6CNW3';
-    //try {
-    //    const captchaVerify = await axios.post(
-    //        `https://www.google.com/recaptcha/api/siteverify`,
-    //        null,
-    //        {
-    //            params: {
-    //                secret: secretKey,
-    //                response: token
-    //            }
-    //        }
-    //    );
-    //
-    //    if (!captchaVerify.data.success) {
-    //        return res.render('login', { error: 'Подтвердите, что вы не робот' });
-    //    }
-    //} catch (err) {
-    //    console.error('Ошибка проверки reCAPTCHA:', err);
-    //    return res.render('login', { error: 'Ошибка проверки reCAPTCHA' });
-    //}
+    // Проверка reCAPTCHA
+    if (!recaptchaResponse) {
+        return res.status(400).render('login', {
+            error: 'Пожалуйста, подтвердите, что вы не робот',
+            csrfToken: req.csrfToken()
+        });
+    }
+
+    try {
+        const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=6Lfl_2ArAAAAAIONwAiTQo9ZVMvhnd_0HVQr8eD6&response=${recaptchaResponse}`;
+        const response = await axios.post(verifyURL);
+        const data = response.data;
+
+        if (!data.success) {
+            return res.status(400).render('login', {
+                error: 'Проверка капчи не пройдена',
+                csrfToken: req.csrfToken()
+            });
+        }
+    } catch (err) {
+        console.error('Ошибка проверки reCAPTCHA:', err);
+        return res.status(500).render('login', {
+            error: 'Ошибка проверки капчи. Попробуйте снова.',
+            csrfToken: req.csrfToken()
+        });
+    }
 
     let user;
 

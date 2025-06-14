@@ -69,7 +69,7 @@
                     <form action="/profile/<%= profileUser.id %>/toggle-visibility" method="POST">
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <button type="submit" class="ml-2 px-2 py-1 text-sm border rounded bg-gray-100 hover:bg-gray-200 transition">
-                            <%= profileUser.hidden ? 'Сделать видимым' : 'Скрыть профиль' %>
+                            <%= profileUser.hidden ? 'Открыть' : 'Скрыть' %>
                         </button>
                     </form>
                 <% } %>
