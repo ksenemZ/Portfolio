@@ -21,6 +21,7 @@
         <div class="absolute top-32 left-1/2 transform -translate-x-1/2 text-center">
             <% if (profileUser.avatar) { %>
                 <img src="<%= profileUser.avatar %>" alt="Аватар" class="w-32 h-32 rounded-full border-4 border-white mx-auto shadow-lg">
+                <% console.log(profileUser.avatar) %>
             <% } else { %>
                 <div class="w-32 h-32 bg-gray-300 rounded-full border-4 border-white mx-auto shadow-lg flex items-center justify-center text-2xl text-white">
                     <%= profileUser.name ? profileUser.name[0] : '?' %>

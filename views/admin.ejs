@@ -15,7 +15,7 @@
     <button id="toggleSidebar" class=" hidden md:hidden p-4 absolute z-50 top-0 left-0 text-xl сursor-pointer">☰</button>
 
     <!-- Контейнер сайдбара -->
-    <aside id="sidebar" class="fixed top-0 md:static transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out w-64 bg-white border-r min-h-screen p-6 space-y-4 z-40">
+    <aside id="sidebar" class="fixed top-0 md:static transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out w-3/5 md:w-64 bg-white border-r min-h-screen p-6 space-y-4 z-51">
         <h2 class="text-2xl font-bold text-gray-800 mb-6">Админ панель</h2>
         <nav class="space-y-2">
             <button onclick="switchTab('stats', event)" class="tab-button w-full text-left px-4 py-2 rounded hover:bg-gray-200">📊 Статистика</button>
@@ -57,9 +57,9 @@
         <div id="tab-users" class="tab-content hidden space-y-6">
             <div class="flex flex-col sm:flex-row gap-2 justify-start h-10">
                 <input type="text" id="userSearchInput" placeholder="Поиск пользователей..."
-                       class="border px-3 py-2 rounded w-64" />
+                       class="border px-3 py-2 rounded md:w-64 w-full" />
 
-                <button onclick="openUserModal()" class="bg-green-500 text-white px-4 py-2 w-64 rounded hover:bg-green-600">
+                <button onclick="openUserModal()" class="bg-green-500 text-white px-4 py-2 md:w-64 w-full rounded hover:bg-green-600">
                     ➕ Создать пользователя
                 </button>
                 <% if (created) { %>
@@ -71,62 +71,86 @@
 
             <div id="userList" class="pt-9 sm:pt-0 space-y-6">
                 <% users.forEach(user => { %>
-                    <div class="bg-white shadow-lg rounded-lg p-4 user-card">
-                        <div class="grid md:grid-cols-[2rem_3rem_auto_1fr_auto_1fr_1fr_auto_auto_auto] gap-3 items-center">
-                            <div class="text-gray-500 font-mono">#<%= user.id %></div>
-                            <img src="<%= user.avatar || '/uploads/default-avatar-hq.png' %>" alt="avatar" class="w-12 h-12 rounded border">
-                            <form action="/admin/user/update/<%= user.id %>" method="POST" class="contents">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <input name="name" value="<%= user.name %>" class="border p-2 rounded w-52" placeholder="Имя" />
-                                <input name="bio" value="<%= user.bio %>" class="border p-2 rounded w-full" placeholder="О себе" />
-                                <select name="role" class="border p-2 rounded w-52">
-                                    <option value="1" <%= user.role === 1 ? 'selected' : '' %>>Student</option>
-                                    <option value="3" <%= user.role === 3 ? 'selected' : '' %>>Teacher</option>
-                                    <option value="2" <%= user.role === 2 ? 'selected' : '' %>>Admin</option>
-                                </select>
+                    <div class="bg-white shadow-lg rounded-lg p-4 user-card space-y-3 flex gap-4">
 
-                                <div class="text-gray-500 text-sm"><%= user.created_at %></div>
+                        <div class="w-1/6 sm:flex hidden flex-col items-center justify-center">
+                            <div class="relative w-full pt-[100%]">
+                                <img
+                                        src="<%= user.avatar || '/uploads/default-avatar-hq.png' %>"
+                                        alt="avatar"
+                                        class="absolute top-0 left-0 w-full h-full object-cover rounded border">
+                            </div>
+                        </div>
+
+                        <div class="sm:w-5/6 space-y-3 w-full flex flex-col justify-between relative">
+                            <div>
+                                <div class="flex flex-wrap md:flex-nowrap items-center gap-3 justify-between">
+                                    <div class="text-gray-500 font-mono">#<%= user.id %></div>
+
+                                    <input name="name" value="<%= user.name %>" class="border p-2 rounded w-full" placeholder="Имя" form="update-<%= user.id %>">
+                                    <select name="role" class="border p-2 rounded w-full md:w-52" form="update-<%= user.id %>">
+                                        <option value="1" <%= user.role === 1 ? 'selected' : '' %>>Student</option>
+                                        <option value="3" <%= user.role === 3 ? 'selected' : '' %>>Teacher</option>
+                                        <option value="2" <%= user.role === 2 ? 'selected' : '' %>>Admin</option>
+                                    </select>
+                                </div>
+
+                                <div class="mt-3">
+                                    <input name="bio" value="<%= user.bio %>" class="border p-2 rounded w-full" placeholder="О себе" form="update-<%= user.id %>">
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap md:flex-nowrap items-center gap-3 justify-between w-full bottom-1">
+                                <div class="text-gray-500 text-sm w-full"><%= user.created_at %></div>
 
                                 <label class="flex items-center gap-2 text-sm">
-                                    <input type="checkbox" name="hidden" value="1" class="w-6 h-6 bg-gray-700 rounded-md peer-checked:bg-blue-600 peer-checked:border-blue-600 border-2 border-gray-500" <%= user.hidden ? 'checked' : '' %> />
+                                    <input type="checkbox" name="hidden" value="1" class="w-6 h-6 bg-gray-700 rounded-md peer-checked:bg-blue-600 peer-checked:border-blue-600 border-2 border-gray-500" <%= user.hidden ? 'checked' : '' %> form="update-<%= user.id %>" />
                                     Скрыт
                                 </label>
 
-                                <button class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 cursor-pointer">💾</button>
-                            </form>
-                            <form action="/admin/user/delete/<%= user.id %>" method="POST" onsubmit="return confirm('Удалить пользователя?')">
+                                <button form="update-<%= user.id %>" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 cursor-pointer w-full">💾</button>
+
+                                <form action="/admin/user/delete/<%= user.id %>" class="w-full" method="POST" onsubmit="return confirm('Удалить пользователя?')">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <button class="bg-red-500 text-lg px-3 py-2 rounded hover:bg-red-600 cursor-pointer w-full">🗑️</button>
+                                </form>
+                            </div>
+
+                            <form id="update-<%= user.id %>" action="/admin/user/update/<%= user.id %>" method="POST" class="hidden">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <button class="bg-red-500 text-lg px-3 py-2 rounded hover:bg-red-600 cursor-pointer">🗑️</button>
                             </form>
                         </div>
+
                     </div>
                 <% }) %>
             </div>
+
         </div>
 
         <!-- Раздел с проектами -->
         <div id="tab-projects" class="tab-content hidden space-y-6">
             <div class="flex flex-col sm:flex-row gap-2 justify-start h-10">
                 <input type="text" id="projectSearchInput" placeholder="Поиск пользователей..."
-                       class="border px-3 py-2 rounded w-64" />
+                       class="border px-3 py-2 rounded lg:w-64 w-full" />
             </div>
 
             <div id="projectList" class="space-y-6">
                 <% projects.forEach(project => { %>
-                    <div class="bg-white shadow-lg rounded-lg p-4 mb-4 space-y-2 project-card">
-                        <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-[2rem_auto_1fr_auto_1fr_auto_auto] gap-3 items-center">
+                    <div class="shadow-lg rounded-lg p-4 mb-4 space-y-2 project-card"
+                         style='background-image: url("<%= project.cover %>"); background-size: cover; background-position: center;'>
+                        <div class="bg-white/85 p-3 rounded grid grid-cols-1 md:grid-cols-1 lg:grid-cols-[2rem_auto_1fr_auto_1fr_auto_auto] gap-3 items-center">
                             <form action="/admin/project/update/<%= project.id %>" method="POST" class="contents">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <div class="text-gray-600 font-mono">#<%= project.id %></div>
-                                <input name="title" value="<%= project.title %>" class="border p-2 rounded w-52" placeholder="Название" />
-                                <input name="description" value="<%= project.description %>" class="border p-2 rounded w-full" placeholder="Описание" />
+                                <input name="title" value="<%= project.title %>" class="border p-2 rounded lg:w-52 w-full" placeholder="Название" />
+                                <input name="description" value="<%= project.description %>" class="border p-2 rounded min-w-52 w-full" placeholder="Описание" />
                                 <div class="text-gray-500 text-sm">Автор ID: <%= project.user_id %></div>
                                 <div class="text-gray-500 text-sm"><%= project.created_at %></div>
                                 <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 cursor-pointer">💾</button>
                             </form>
-                            <form action="/admin/project/delete/<%= project.id %>" method="POST" onsubmit="return confirm('Удалить проект?')">
+                            <form action="/admin/project/delete/<%= project.id %>" class="w-full" method="POST" onsubmit="return confirm('Удалить проект?')">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <button class="bg-red-500 text-lg px-3 py-2 rounded hover:bg-red-600 cursor-pointer">🗑️</button>
+                                <button class="bg-red-500 text-lg px-3 py-2 rounded hover:bg-red-600 cursor-pointer w-full">🗑️</button>
                             </form>
                         </div>
                     </div>

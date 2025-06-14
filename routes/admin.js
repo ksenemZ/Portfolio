@@ -17,7 +17,7 @@ router.get('/', checkAdmin, async (req, res) => {
     const token = req.csrfToken();
 
     const users = await dbAll('SELECT * FROM users');
-    const admins = await dbAll("SELECT id, name, cover as avatar FROM users WHERE role = '2'");
+    const admins = await dbAll("SELECT id, name, avatar FROM users WHERE role = '2'");
     const projects = await dbAll('SELECT * FROM projects');
     const totalUsers = await dbGet('SELECT COUNT(*) as count FROM users');
     const totalProjects = await dbGet('SELECT COUNT(*) as count FROM projects');
@@ -323,7 +323,7 @@ router.post('/todo/assign', checkAdmin, async (req, res) => {
 
 router.get('/chat/messages', checkAdmin, async (req, res) => {
     const messages = await dbAll(`
-        SELECT admin_chat_messages.*, users.name as username, users.cover as avatar
+        SELECT admin_chat_messages.*, users.name as username, users.avatar as avatar
         FROM admin_chat_messages
         JOIN users ON users.id = admin_chat_messages.user_id
         ORDER BY admin_chat_messages.created_at ASC

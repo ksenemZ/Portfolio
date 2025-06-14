@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let startX = 0;
     let endX = 0;
+    let isMouseDown = false;
 
     document.addEventListener('touchstart', (e) => {
         startX = e.touches[0].clientX;
@@ -18,13 +19,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('touchend', (e) => {
         endX = e.changedTouches[0].clientX;
+        handleSwipe();
+    });
 
+    document.addEventListener('mousedown', (e) => {
+        isMouseDown = true;
+        startX = e.clientX;
+    });
+
+    document.addEventListener('mouseup', (e) => {
+        if (!isMouseDown) return;
+        isMouseDown = false;
+        endX = e.clientX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
         if (endX - startX > 100) {
             sidebar.classList.remove('-translate-x-full');
         } else if (startX - endX > 100) {
             sidebar.classList.add('-translate-x-full');
         }
-    });
+    }
 });
 
 document.getElementById('userSearchInput').addEventListener('input', function () {
