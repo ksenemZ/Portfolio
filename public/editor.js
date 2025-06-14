@@ -331,7 +331,7 @@ function updatePropsPanel(el) {
             <label class="block text-sm mb-1 mt-3">Имя элемента</label>
             <input type="text" value="${el.dataset.uid}" 
                    oninput="selectedElement.dataset.uid = this.value; updateObjectTree();" class="w-full bg-gray-200 p-2 rounded-2xl">
-            <button onclick="removeElement(selectedElement)" class="mt-4 bg-red-500 text-white px-2 py-1 rounded">
+            <button onclick="removeElement(selectedElement)" class="mt-4 mb-10 bg-red-500 text-white px-2 py-1 rounded">
               Удалить элемент
             </button>
   `;

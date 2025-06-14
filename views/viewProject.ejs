@@ -32,7 +32,7 @@
             <button class="bg-red-500 text-white px-4 py-2 rounded flex w-max mt-2 hover:bg-red-600" onclick="exportCanvasToPDF()">Экспортировать в PDF</button>
         <% } %>
         <% if (user) { %>
-            <button id="likeBtn" class="bg-green-500 text-white px-4 py-2 rounded flex w-max mt-2 hover:bg-green-600">❤️ Понравилось</button>
+            <button id="likeBtn" class="bg-green-500 text-white px-4 py-2 rounded flex w-max mt-2 hover:bg-green-600">❤️<span class="text-sm text-white mt-0.5 block mr-3"><%= project.popularity || 0 %></span> Оценить</button>
         <% } %>
         <% if (user) { %>
             <button class="bg-blue-500 text-white px-4 py-2 rounded flex w-max mt-2 hover:bg-blue-600"><a href="/profile/<%= user.id %>">Вернуться в профиль</a></button>
@@ -40,7 +40,6 @@
             <button class="bg-blue-500 text-white px-4 py-2 rounded flex w-max mt-2 hover:bg-blue-600"><a href="/">Вернуться на главную</a></button>
         <% } %>
     </div>
-    <span class="text-sm text-gray-600 mt-1 block">Оценок: <%= project.popularity || 0 %></span>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
