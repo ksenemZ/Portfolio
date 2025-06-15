@@ -180,10 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         ${message.user_id === currentUserId ? `
                             <div class="flex gap-2 text-xs text-blue-500">
-                                <button type="button" onclick="openEditModal(${message.id}, \`${message.text.replace(/`/g, '\\`')}\`)">✏️</button>
+                                <button type="button"
+                                    onclick="openEditModal(${message.id}, this.dataset.text)"
+                                    data-text="${encodeURIComponent(message.text)}"
+                                    class="cursor-pointer">✏️</button>
                                 <form action="/admin/chat/delete/${message.id}" method="POST" onsubmit="return confirm('Удалить сообщение?')">
                                     <input type="hidden" name="_csrf" value="${csrfToken}">
-                                    <button type="submit">🗑️</button>
+                                    <button type="submit" class="cursor-pointer">🗑️</button>
                                 </form>
                             </div>` : ''
                         }
@@ -215,10 +218,11 @@ chatContainer.addEventListener("scroll", () => {
     autoScroll = isAtBottom();
 });
 
-function openEditModal(messageId, messageText) {
+function openEditModal(messageId, encodedText) {
+    const text = decodeURIComponent(encodedText);
     const form = document.getElementById('edit-form');
     form.action = `/admin/chat/edit/${messageId}`;
-    form.text.value = messageText;
+    form.text.value = text;
     document.getElementById('edit-modal').classList.remove('hidden');
 }
 

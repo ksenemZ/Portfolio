@@ -197,47 +197,14 @@
         </div>
 
         <!-- Таблица с командой -->
-        <div id="tab-team" class="tab-content hidden grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr]">
+        <div id="tab-team" class="tab-content hidden grid grid-cols-1 gap-4 min-[75rem]:grid-cols-[2fr_1fr]">
             <div id="admin-chat" class="bg-white rounded-lg p-6 shadow-lg flex flex-col h-[500px] overflow-hidden w-full">
                 <h2 class="text-xl font-semibold mb-4">Админский чат</h2>
                 <div id="chat-messages" data-current-user="<%= currentUser.id %>" class="flex-1 overflow-y-auto space-y-4 pr-2">
-                    <% messages.forEach(message => { %>
-                        <div class="flex <%= message.user_id === currentUser.id ? 'justify-end' : 'justify-start' %>">
-                            <div class="max-w-[70%] mb-3 p-3 rounded-lg shadow-md relative <%= message.user_id === currentUser.id ? 'bg-blue-100' : 'bg-gray-100' %>">
-                                <div class="flex items-center justify-between mb-1 gap-3">
-                                    <div class="flex items-center gap-2">
-                                        <img src="<%= message.avatar || '/uploads/default-avatar-hq.png' %>" class="w-6 h-6 rounded-full">
-                                        <span class="font-semibold text-sm"><%= message.username %></span>
-                                    </div>
-                                    <% if (message.user_id === currentUser.id) { %>
-                                        <div class="flex gap-2 text-xs text-blue-500">
-                                            <button type="button" onclick="openEditModal(<%= message.id %>, `<%- message.text.replace(/`/g, '\\`') %>`)">✏️</button>
-                                            <form action="/admin/chat/delete/<%= message.id %>" method="POST" onsubmit="return confirm('Удалить сообщение?')">
-                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                <button type="submit">🗑️</button>
-                                            </form>
-                                        </div>
-                                    <% } %>
-                                </div>
-                                <p class="text-sm" name="text">
-                                    <%= message.text %>
-                                    <% if (message.edited) { %><span class="text-xs text-gray-500 ml-2">(изменено)</span><% } %>
-                                </p>
 
-                                <p class="text-xs text-gray-500 mt-1 text-right">
-                                    <%= new Date(message.created_at).toLocaleString('ru-RU', {
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                        day: '2-digit',
-                                        month: 'short'
-                                    }) %>
-                                </p>
-                            </div>
-                        </div>
-                    <% }) %>
                 </div>
 
-                <form id="chat-form" action="/admin/chat/send" method="POST" class="mt-4 flex gap-3">
+                <form id="chat-form" action="/admin/chat/send" method="POST" class="mt-4 flex sm:flex-row flex-col gap-3">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <input name="text" id="chat-input" required class="border rounded px-3 py-2 flex-1" placeholder="Введите сообщение..." autocomplete="off">
                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-600">📤</button>
@@ -247,7 +214,7 @@
             <div id="todo-section" class="bg-white rounded-lg p-6 shadow-lg space-y-4 w-full">
                 <h2 class="text-xl font-bold text-gray-800">To-Do List</h2>
 
-                <form action="/admin/todo/create" method="POST" class="flex gap-3">
+                <form action="/admin/todo/create" method="POST" class="flex sm:flex-row flex-col gap-3">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <input name="text" required class="border rounded px-3 py-2 flex-1" placeholder="Новая задача">
                     <button class="bg-green-500 text-white px-4 py-2 cursor-pointer rounded hover:bg-green-600">➕</button>
@@ -351,7 +318,7 @@
 </div>
 
 <!-- Модальное окно -->
-<div id="userModal" class="fixed inset-0 items-center justify-center z-50 hidden bg-black/50">
+<div id="userModal" class="fixed inset-0 items-center justify-center z-55 hidden bg-black/50">
     <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
         <button onclick="closeUserModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl font-bold">×</button>
         <h2 class="text-xl font-semibold mb-4">Создание нового пользователя</h2>
