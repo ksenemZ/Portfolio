@@ -1578,11 +1578,6 @@
       translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
-  .sm\:grid-cols-1 {
-    @media (width >= 40rem) {
-      grid-template-columns: repeat(1, minmax(0, 1fr));
-    }
-  }
   .sm\:grid-cols-2 {
     @media (width >= 40rem) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1688,31 +1683,6 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
-  .md\:grid-cols-\[2rem_3rem_3rem_1fr_auto_1fr_1fr_auto_auto_auto\] {
-    @media (width >= 48rem) {
-      grid-template-columns: 2rem 3rem 3rem 1fr auto 1fr 1fr auto auto auto;
-    }
-  }
-  .md\:grid-cols-\[2rem_3rem_auto_1fr_auto_1fr_1fr_auto_auto_auto\] {
-    @media (width >= 48rem) {
-      grid-template-columns: 2rem 3rem auto 1fr auto 1fr 1fr auto auto auto;
-    }
-  }
-  .md\:grid-cols-\[2rem_3rem_auto_auto_auto_1fr_1fr_auto_auto_auto\] {
-    @media (width >= 48rem) {
-      grid-template-columns: 2rem 3rem auto auto auto 1fr 1fr auto auto auto;
-    }
-  }
-  .md\:grid-cols-\[2rem_auto_1fr_auto_1fr_auto_auto\] {
-    @media (width >= 48rem) {
-      grid-template-columns: 2rem auto 1fr auto 1fr auto auto;
-    }
-  }
-  .md\:flex-row {
-    @media (width >= 48rem) {
-      flex-direction: row;
-    }
-  }
   .md\:flex-nowrap {
     @media (width >= 48rem) {
       flex-wrap: nowrap;
@@ -1751,6 +1721,11 @@
   .lg\:grid-cols-\[2rem_auto_1fr_auto_1fr_auto_auto\] {
     @media (width >= 64rem) {
       grid-template-columns: 2rem auto 1fr auto 1fr auto auto;
+    }
+  }
+  .min-\[75rem\]\:grid-cols-\[2fr_1fr\] {
+    @media (width >= 75rem) {
+      grid-template-columns: 2fr 1fr;
     }
   }
 }
